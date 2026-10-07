@@ -398,7 +398,7 @@ p.on('error',e=>{if(e.type=='unavailable-id'){if(quick){p.destroy();netJoin('qm'
 function netQuick(){netHost(null,1)}
 function netJoin(code,quick){code=(code||'').trim().toUpperCase();if(!quick&&code.length<4){window._ne='Enter a room code.';return menu('online')}
 if(quick)code='qm';netInit();NET.g=1;NET.st=quick?'FOUND A MATCH — JOINING…':'JOINING ROOM '+code+'…';menu('online');
-const p=NET.peer=new Peer();p.on('open',()=>{const c=p.connect(PFX+code,{reliable:true});netWire(c);
+const p=NET.peer=new Peer();p.on('open',()=>{const c=p.connect(PFX+code,{reliable:false,serialization:'json'});netWire(c);
 setTimeout(()=>{if(NET&&NET.g&&NET.c===c&&!c.open){if(quick){netQuit(1);netQuick()}else netErr('Room '+code+' not found.')}},7000)});
 p.on('error',e=>{if(e.type=='peer-unavailable'){if(quick){netQuit(1);netQuick()}else netErr('Room '+code+' not found.')}else if(!(NET&&NET.c&&NET.c.open))netErr('Network error: '+e.type)})}
 function netQuit(silent){const n=NET;NET=null;if(n){try{n.c&&n.c.close()}catch(e){}try{n.peer&&n.peer.destroy()}catch(e){}}if(!silent){cfg.mode='online';menu(window._ne?'online':'mode')}}
@@ -411,18 +411,18 @@ else if(d.t=='p'){if(NET.h&&scene=='play'&&F[1]&&F[1].ai==-3)F[1].pr[d.k]=1}
 else if(d.t=='re'){if(NET.h&&scene=='over')start()}
 else if(d.t=='s')netApply(d)}
 // --- serialization: replace shared references with indices ---
-function enc(v,top){return JSON.stringify(v,function(k,x){if(x&&typeof x=='object'&&k!==''){let i=CHARS.indexOf(x);if(i>=0)return{$c:i};i=F.indexOf(x);if(i>=0&&this!==top)return{$f:i};if(typeof BUILDS!='undefined'){i=BUILDS.indexOf(x);if(i>=0)return{$b:i}}}if(typeof x=='number')return Math.round(x*100)/100;return x})}
+let RM=null;function enc(v,top){if(!RM){RM=new Map();CHARS.forEach((c,i)=>RM.set(c,{$c:i}));if(typeof BUILDS!='undefined')BUILDS.forEach((b,i)=>RM.set(b,{$b:i}))}const f0=F[0],f1=F[1];return JSON.stringify(v,function(k,x){if(typeof x=='number')return Math.round(x*10)/10;if(x&&typeof x=='object'){const r=RM.get(x);if(r)return r;if(this!==top&&k!==''){if(x===f0)return{$f:0};if(x===f1)return{$f:1}}}return x})}
 function dec(o,Fs){if(Array.isArray(o)){for(let i=0;i<o.length;i++)o[i]=dec(o[i],Fs);return o}if(o&&typeof o=='object'){if('$c'in o)return CHARS[o.$c];if('$b'in o)return BUILDS[o.$b];if('$f'in o)return{$f:o.$f};for(const k in o)o[k]=dec(o[k],Fs);}return o}
 function fixF(o,Fs){if(Array.isArray(o)){o.forEach((v,i)=>{if(v&&v.$f!=null&&Object.keys(v).length==1)o[i]=Fs[v.$f];else fixF(v,Fs)})}else if(o&&typeof o=='object'){for(const k in o){const v=o[k];if(v&&typeof v=='object'){if(v.$f!=null&&Object.keys(v).length==1)o[k]=Fs[v.$f];else fixF(v,Fs)}}}}
-function netHostTick(){if(!NET.c||!NET.c.open)return;if(scene=='menu')return;
+function netHostTick(){if(!NET.c||!NET.c.open)return;if(scene=='menu')return;const dc=NET.c.dataChannel;if(dc&&dc.bufferedAmount>65536)return;
 const st={F,PR,EX,CIN,RET,FL,shake,stop,winner,scene,mi:cfg.map,sq:SQ.splice(0)};
-const pt=(T%2==0)?PT.map(p=>[p.x,p.y,p.vx,p.vy,p.l,p.m,p.c,p.s].map(v=>typeof v=='number'?Math.round(v*10)/10:v)):null;
+const pt=(T%4==0)?PT.map(p=>[p.x,p.y,p.vx,p.vy,p.l,p.m,p.c,p.s].map(v=>typeof v=='number'?Math.round(v*10)/10:v)):null;
 netSend({t:'s',d:enc(st,F),pt})}
 function netApply(m){const s=dec(JSON.parse(m.d));fixF(s,s.F);
 if(scene=='menu'||NET.mi!==s.mi){map=bigMap(MAPS[s.mi]);NET.mi=s.mi;M.style.display='none';CZ=.7;CX=WW/2;CY=WH/2}
 F=s.F;PR=s.PR;EX=s.EX;CIN=s.CIN;RET=s.RET;FL=s.FL;shake=s.shake;stop=s.stop;winner=s.winner;scene=s.scene;paused=false;tut=null;
 if(m.pt)PT=m.pt.map(a=>({x:a[0],y:a[1],vx:a[2],vy:a[3],l:a[4],m:a[5],c:a[6],s:a[7]}));
-for(const a of s.sq||[])snd(...a)}
-function netGuestTick(){if(scene!='play')return;const K=keys,h={l:K.KeyA||K.ArrowLeft,r:K.KeyD||K.ArrowRight,d:K.KeyS||K.ArrowDown,u:K.KeyW||K.ArrowUp},j=JSON.stringify(h);if(j!=NET.lh||T%30==0){NET.lh=j;netSend({t:'h',h})}}
+for(const a of s.sq||[])snd(...a);NET.got=1}
+function netGuestTick(){if(scene!='play')return;if(!NET.got&&stop<=0){for(const f of F)if(f.dead<=0){f.x+=f.vx||0;f.y+=f.vy||0}for(const p of PR){p.x+=p.vx||0;p.y+=p.vy||0}}NET.got=0;const K=keys,h={l:K.KeyA||K.ArrowLeft,r:K.KeyD||K.ArrowRight,d:K.KeyS||K.ArrowDown,u:K.KeyW||K.ArrowUp},j=JSON.stringify(h);if(j!=NET.lh||T%30==0){NET.lh=j;netSend({t:'h',h})}}
 menu();loop();
 </script></body></html>
