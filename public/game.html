@@ -422,7 +422,7 @@ function netApply(m){const s=dec(JSON.parse(m.d));fixF(s,s.F);
 if(scene=='menu'||NET.mi!==s.mi){map=bigMap(MAPS[s.mi]);NET.mi=s.mi;M.style.display='none';CZ=.7;CX=WW/2;CY=WH/2}
 F=s.F;PR=s.PR;EX=s.EX;CIN=s.CIN;RET=s.RET;FL=s.FL;shake=s.shake;stop=s.stop;winner=s.winner;scene=s.scene;paused=false;tut=null;
 if(m.pt)PT=m.pt.map(a=>({x:a[0],y:a[1],vx:a[2],vy:a[3],l:a[4],m:a[5],c:a[6],s:a[7]}));
-for(const a of s.sq||[])snd(...a)}
-function netGuestTick(){if(scene!='play')return;const K=keys,h={l:K.KeyA||K.ArrowLeft,r:K.KeyD||K.ArrowRight,d:K.KeyS||K.ArrowDown,u:K.KeyW||K.ArrowUp},j=JSON.stringify(h);if(j!=NET.lh||T%30==0){NET.lh=j;netSend({t:'h',h})}}
+for(const a of s.sq||[])snd(...a);NET.got=1}
+function netGuestTick(){if(scene!='play')return;if(!NET.got&&stop<=0){for(const f of F)if(f.dead<=0){f.x+=f.vx||0;f.y+=f.vy||0}for(const p of PR){p.x+=p.vx||0;p.y+=p.vy||0}}NET.got=0;const K=keys,h={l:K.KeyA||K.ArrowLeft,r:K.KeyD||K.ArrowRight,d:K.KeyS||K.ArrowDown,u:K.KeyW||K.ArrowUp},j=JSON.stringify(h);if(j!=NET.lh||T%30==0){NET.lh=j;netSend({t:'h',h})}}
 menu();loop();
 </script></body></html>
