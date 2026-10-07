@@ -418,7 +418,7 @@ function netHostTick(){if(!NET.c||!NET.c.open)return;if(scene=='menu')return;
 const st={F,PR,EX,CIN,RET,FL,shake,stop,winner,scene,mi:cfg.map,sq:SQ.splice(0)};
 const pt=(T%2==0)?PT.map(p=>[p.x,p.y,p.vx,p.vy,p.l,p.m,p.c,p.s].map(v=>typeof v=='number'?Math.round(v*10)/10:v)):null;
 netSend({t:'s',d:enc(st,F),pt})}
-function netApply(m){const s=dec(JSON.parse(m.d));fixF(s,s.F);fixF(s.F,s.F);
+function netApply(m){const s=dec(JSON.parse(m.d));fixF(s,s.F);
 if(scene=='menu'||NET.mi!==s.mi){map=bigMap(MAPS[s.mi]);NET.mi=s.mi;M.style.display='none';CZ=.7;CX=WW/2;CY=WH/2}
 F=s.F;PR=s.PR;EX=s.EX;CIN=s.CIN;RET=s.RET;FL=s.FL;shake=s.shake;stop=s.stop;winner=s.winner;scene=s.scene;paused=false;tut=null;
 if(m.pt)PT=m.pt.map(a=>({x:a[0],y:a[1],vx:a[2],vy:a[3],l:a[4],m:a[5],c:a[6],s:a[7]}));
