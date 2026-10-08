@@ -13,7 +13,7 @@ export function rankName(rating: number, legend = false): string {
 export function rankKey(rating: number, legend = false): string {
   if (legend) return "legend";
   if (rating >= GM_RATING) return "grandmaster";
-  return TIERS[Math.floor(Math.floor(Math.max(0, rating) / 100) / 3)].toLowerCase();
+  return (TIERS[Math.floor(Math.floor(Math.max(0, rating) / 100) / 3)] ?? "bronze").toLowerCase();
 }
 
 export function rankProgress(rating: number): number {
