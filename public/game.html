@@ -104,7 +104,7 @@ g.fillStyle='#fff9';g.font='13px system-ui';g.fillText(ch0()+' tutorial · Esc: 
 function ch0(){return F[0]?F[0].ch.n:''}
 // ===== game setup =====
 function mk(i,ch,ai){const s=map.P[0];return{i,ch:CHARS[ch],x:s.x+s.w*(i?.7:.3),y:s.y-300,vx:0,vy:0,face:i?-1:1,dmg:0,fly:0,dh:0,bld:null,uses:CHARS[ch].kit?1e9:0,em:null,edur:0,edm:0,pop:null,lastb:-1,sk:0,slow:0,root:0,rally:0,us3:0,hole:0,fk:0,frz:0,lock:0,cutT:0,buff:0,us:0,us2:0,etr:0,mp:0,cd1:0,cd4:0,dash:0,st:3,jumps:2,gr:0,atk:0,at:0,hit:0,stun:0,inv:90,sq:0,ph:0,drop:0,dead:0,ai,hold:{},pr:{},dec:0,cool:0,tgt:0}}
-function start(t){if(NET&&!NET.h&&!t)return netSend({t:'re'});if(NET&&t)netQuit(1);if(NET)cfg.p2=NET.och;tut=t?{s:0,v:0,cd:40}:null;map=bigMap(MAPS[t?0:cfg.map]);CIN=null;SPC=null;PETS=[];DOM=null;CZ=.7;CX=WW/2;CY=WH/2;F=[mk(0,cfg.p1,-1),mk(1,t?2:cfg.p2,t?-2:cfg.mode=='online'?-3:cfg.mode=='cpu'?cfg.diff:-1)];if(t){F.forEach(f=>f.st=99);tut.k={};tut.st=tutSteps(F[0].ch)}PR=[];PT=[];winner=-1;paused=false;M.style.display='none';scene='play';snd(300,.2,'sawtooth')}
+function start(t){if(NET&&!NET.h&&!t)return netSend({t:'re'});if(NET&&t)netQuit(1);if(NET){cfg.p2=NET.och;if(NET.rk){NET.mid=rcode()+rcode()+Date.now().toString(36);netSend({t:'mid',m:NET.mid})}}tut=t?{s:0,v:0,cd:40}:null;map=bigMap(MAPS[t?0:cfg.map]);CIN=null;SPC=null;PETS=[];DOM=null;CZ=.7;CX=WW/2;CY=WH/2;F=[mk(0,cfg.p1,-1),mk(1,t?2:cfg.p2,t?-2:cfg.mode=='online'?-3:cfg.mode=='cpu'?cfg.diff:-1)];if(t){F.forEach(f=>f.st=99);tut.k={};tut.st=tutSteps(F[0].ch)}PR=[];PT=[];winner=-1;paused=false;M.style.display='none';scene='play';snd(300,.2,'sawtooth')}
 let FL=0,EX=[];const WW=1536,WH=756,SX=1.6,SY=1.4;let CZ=.8,CX=WW/2,CY=WH/2,CIN=null,RET=null;function keyAct(c){const solo=F[1]&&F[1].ai!=-1,n='mahsu',d=c.startsWith('Digit')?+c[5]:c.startsWith('Numpad')&&c.length==7?+c[6]:0;
 if(d>=1&&d<=5)return[c[0]=='D'||solo?0:1,n[d-1]];
 return{KeyW:[0,'j'],ArrowUp:[solo?0:1,'j'],KeyJ:[1,'m'],KeyK:[1,'a'],KeyL:[1,'h'],Semicolon:[1,'s'],Quote:[1,'u']}[c]}
@@ -566,34 +566,39 @@ F.forEach(drawF);
 for(const p of PT){g.globalAlpha=Math.max(0,p.l/p.m);g.fillStyle=p.c;g.beginPath();g.arc(p.x,p.y,p.s*Math.max(.2,p.l/p.m),0,6.3);g.fill()}g.globalAlpha=1;camEnd();g.restore();
 if(scene!='menu'){hud();g.textAlign='center';if(tut)tutDraw();
 if(paused){g.fillStyle='#000a';g.fillRect(0,0,W,H);g.fillStyle='#fff';g.font='900 56px system-ui';g.fillText('PAUSED',W/2,H/2);g.font='18px system-ui';g.fillText('Esc to resume',W/2,H/2+34)}
-if(scene=='over'){g.fillStyle='#000b';g.fillRect(0,0,W,H);const w=F[winner];g.fillStyle=w.ch.c;g.shadowColor=w.ch.c;g.shadowBlur=30;g.font='italic 900 '+(64+Math.sin(T*.1)*4)+'px system-ui';g.fillText((winner==1&&w.ai>=0?'CPU':'PLAYER '+(winner+1))+' WINS!',W/2,H/2);g.shadowBlur=0;g.fillStyle='#fff';g.font='20px system-ui';g.fillText(NET?(NET.h?'Enter: rematch   ·   Esc: leave':'Waiting for host rematch (Enter to ask)   ·   Esc: leave'):'Enter: rematch   ·   Esc: menu',W/2,H/2+46)}}if(NET&&scene!='menu'){g.textAlign='right';g.font='bold 13px system-ui';g.fillStyle=NET.c?'#7dff9a':'#f66';g.fillText((NET.c?'● ONLINE · ':'● DISCONNECTED · ')+'YOU ARE P'+(NET.h?1:2),W-14,22)}}
+if(scene=='over'){g.fillStyle='#000b';g.fillRect(0,0,W,H);const w=F[winner];g.fillStyle=w.ch.c;g.shadowColor=w.ch.c;g.shadowBlur=30;g.font='italic 900 '+(64+Math.sin(T*.1)*4)+'px system-ui';g.fillText((winner==1&&w.ai>=0?'CPU':'PLAYER '+(winner+1))+' WINS!',W/2,H/2);g.shadowBlur=0;g.fillStyle='#fff';g.font='20px system-ui';g.fillText(NET?(NET.h?'Enter: rematch   ·   Esc: leave':'Waiting for host rematch (Enter to ask)   ·   Esc: leave'):'Enter: rematch   ·   Esc: menu',W/2,H/2+46)}}if(NET&&scene!='menu'){g.textAlign='right';g.font='bold 13px system-ui';g.fillStyle=NET.c?'#7dff9a':'#f66';g.fillText((NET.c?'● ONLINE · ':'● DISCONNECTED · ')+(NET.rk?'RANKED · ':'')+'YOU ARE P'+(NET.h?1:2)+(NET.on?' · vs '+NET.on+(NET.rk?' ('+rankName(NET.or,NET.olg)+')':''):''),W-14,22)}}
 
 // ===== ONLINE (peer-to-peer, host-authoritative) =====
-let NET=null,SQ=[];const PFX='finalfight-v1-';
+let NET=null,SQ=[],ME=null;
+const TIERS=['Bronze','Silver','Gold','Platinum','Diamond','Crystal','Master'];
+function rankName(r,lg){r=r||0;if(lg)return'Legend';if(r>=2100)return'Grandmaster';const d=Math.floor(r/100);return TIERS[Math.floor(d/3)]+' '+(d%3+1)}
+function netRanked(){if(!ME){parent.postMessage({type:'ff-signin'},location.origin);return}netHost(null,1,1)}
+addEventListener('message',e=>{if(e.origin!==location.origin||!e.data)return;if(e.data.type=='ff-auth'){ME=e.data.me;if(scene=='menu'&&page=='online'&&!NET)menu('online')}});
+parent!==window&&parent.postMessage({type:'ff-ready'},location.origin);const PFX='finalfight-v1-';
 {const _s=snd;snd=function(...a){if(NET&&NET.h&&scene!='menu')SQ.push(a);return _s(...a)}}
 function rcode(){const A='ABCDEFGHJKMNPQRSTUVWXYZ23456789';let c='';for(let i=0;i<5;i++)c+=A[Math.floor(Math.random()*A.length)];return c}
 function netPage(bk){if(!window.Peer)return`<div class="hd">ONLINE UNAVAILABLE</div><small>Couldn't load the online library. Check your connection.</small><div class="r">${bk("menu('mode')")}</div>`;
 if(NET&&NET.code)return`<div class="hd">ROOM CODE</div><div id="code">${NET.code}</div><small>${NET.st}<br>Share this code with a friend.</small><div class="r"><button class="b" onclick="netQuit()">✕ CANCEL</button></div>`;
 if(NET)return`<div class="hd">${NET.st}</div><div class="r"><button class="b" onclick="netQuit()">✕ CANCEL</button></div>`;
-return`<div class="hd">PLAY ONLINE</div><div class="cards"><div class="card" style="width:200px;padding:22px" onclick="netQuick()"><b style="font-size:20px">⚡ QUICK MATCH</b>fight a random player</div><div class="card" style="width:200px;padding:22px" onclick="netHost()"><b style="font-size:20px">🏠 CREATE ROOM</b>get a code for a friend</div></div><div class="r"><input id="jc" class="in" maxlength="5" placeholder="CODE" onkeydown="event.stopPropagation();if(event.key=='Enter')netJoin(this.value)"><button class="b on" onclick="netJoin(document.getElementById('jc').value)">JOIN ROOM</button></div><small>${window._ne||''}</small><div class="r">${bk("menu('mode')")}</div>`}
+return`<div class="hd">PLAY ONLINE</div><div class="cards"><div class="card" style="width:200px;padding:22px;border-color:#ffd23c" onclick="netRanked()"><b style="font-size:20px">🏆 RANKED</b>${ME?ME.username+' · '+rankName(ME.rating,ME.legend):'sign in to climb the ladder'}</div><div class="card" style="width:200px;padding:22px" onclick="netQuick()"><b style="font-size:20px">⚡ QUICK MATCH</b>fight a random player</div><div class="card" style="width:200px;padding:22px" onclick="netHost()"><b style="font-size:20px">🏠 CREATE ROOM</b>get a code for a friend</div></div><div class="r"><input id="jc" class="in" maxlength="5" placeholder="CODE" onkeydown="event.stopPropagation();if(event.key=='Enter')netJoin(this.value)"><button class="b on" onclick="netJoin(document.getElementById('jc').value)">JOIN ROOM</button></div><small>${window._ne||''}</small><div class="r">${bk("menu('mode')")}</div>`}
 function netErr(m){window._ne=m;netQuit()}
 function netInit(){NET={h:0,g:0,c:null,rh:{},och:null,st:'CONNECTING…',lh:''};}
-function netWire(c){NET.c=c;c.on('open',()=>{NET.st='CONNECTED';try{NET.peer.disconnect()}catch(e){}snd(880,.15,'triangle');pk=0;window._ne='';netSend({t:'ch',i:cfg.p1,hi:1});menu('chars')});
+function netWire(c){NET.c=c;c.on('open',()=>{NET.st='CONNECTED';try{NET.peer.disconnect()}catch(e){}snd(880,.15,'triangle');pk=0;window._ne='';netSend({t:'ch',i:cfg.p1,hi:1});netSend({t:'hi',id:ME&&ME.id,n:ME?ME.username:'Guest',r:ME?ME.rating:0,lg:ME&&ME.legend,rk:NET.rk});menu('chars')});
 c.on('data',netRecv);c.on('close',()=>{if(NET){NET.c=null;if(scene=='menu')netErr('Opponent left.');}});c.on('error',()=>{})}
-function netHost(code,quick){netInit();NET.h=1;NET.code=quick?null:(code||rcode());NET.st=quick?'SEARCHING FOR AN OPPONENT…':'WAITING FOR OPPONENT…';menu('online');
-const p=NET.peer=new Peer(PFX+(quick?'qm':NET.code));p.on('connection',c=>{if(NET.c){c.on('open',()=>{c.send({t:'full'});setTimeout(()=>c.close(),300)});return}netWire(c)});
-p.on('error',e=>{if(e.type=='unavailable-id'){if(quick){p.destroy();netJoin('qm',1)}else{p.destroy();netHost()}}else if(!NET.c)netErr('Network error: '+e.type)})}
+function netHost(code,quick,rk){netInit();NET.rk=rk?1:0;NET.h=1;NET.code=quick?null:(code||rcode());NET.st=quick?'SEARCHING FOR AN OPPONENT…':'WAITING FOR OPPONENT…';menu('online');
+const p=NET.peer=new Peer(PFX+(quick?(rk?'rk':'qm'):NET.code));p.on('connection',c=>{if(NET.c){c.on('open',()=>{c.send({t:'full'});setTimeout(()=>c.close(),300)});return}netWire(c)});
+p.on('error',e=>{if(e.type=='unavailable-id'){if(quick){p.destroy();netJoin(rk?'rk':'qm',1,rk)}else{p.destroy();netHost()}}else if(!NET.c)netErr('Network error: '+e.type)})}
 function netQuick(){netHost(null,1)}
-function netJoin(code,quick){code=(code||'').trim().toUpperCase();if(!quick&&code.length<4){window._ne='Enter a room code.';return menu('online')}
-if(quick)code='qm';netInit();NET.g=1;NET.st=quick?'FOUND A MATCH — JOINING…':'JOINING ROOM '+code+'…';menu('online');
+function netJoin(code,quick,rk){code=(code||'').trim().toUpperCase();if(!quick&&code.length<4){window._ne='Enter a room code.';return menu('online')}
+if(quick)code=rk?'rk':'qm';netInit();NET.g=1;NET.rk=rk?1:0;NET.st=quick?'FOUND A MATCH — JOINING…':'JOINING ROOM '+code+'…';menu('online');
 const p=NET.peer=new Peer();p.on('open',()=>{const c=p.connect(PFX+code,{reliable:false,serialization:'json'});netWire(c);
-setTimeout(()=>{if(NET&&NET.g&&NET.c===c&&!c.open){if(quick){netQuit(1);netQuick()}else netErr('Room '+code+' not found.')}},7000)});
-p.on('error',e=>{if(e.type=='peer-unavailable'){if(quick){netQuit(1);netQuick()}else netErr('Room '+code+' not found.')}else if(!(NET&&NET.c&&NET.c.open))netErr('Network error: '+e.type)})}
+setTimeout(()=>{if(NET&&NET.g&&NET.c===c&&!c.open){if(quick){netQuit(1);rk?netRanked():netQuick()}else netErr('Room '+code+' not found.')}},7000)});
+p.on('error',e=>{if(e.type=='peer-unavailable'){if(quick){netQuit(1);rk?netRanked():netQuick()}else netErr('Room '+code+' not found.')}else if(!(NET&&NET.c&&NET.c.open))netErr('Network error: '+e.type)})}
 function netQuit(silent){const n=NET;NET=null;if(n){try{n.c&&n.c.close()}catch(e){}try{n.peer&&n.peer.destroy()}catch(e){}}if(!silent){cfg.mode='online';menu(window._ne?'online':'mode')}}
 function netSend(o){if(NET&&NET.c&&NET.c.open)try{NET.c.send(o)}catch(e){}}
 function netRecv(d){if(!NET)return;
 if(d.t=='full'){netErr('That room is full.');return}
-if(d.t=='ch'){NET.och=d.i;if(NET.h&&scene=='menu'&&page=='maps')menu('maps')}
+if(d.t=='hi'){NET.oid=d.id;NET.on=d.n;NET.or=d.r;NET.olg=d.lg;if(NET.rk&&(!d.id||!d.rk)){netErr('Opponent is not in ranked.');return}}else if(d.t=='mid'){NET.mid=d.m}else if(d.t=='ch'){NET.och=d.i;if(NET.h&&scene=='menu'&&page=='maps')menu('maps')}
 else if(d.t=='h')NET.rh=d.h||{};
 else if(d.t=='p'){if(NET.h&&scene=='play'&&F[1]&&F[1].ai==-3)F[1].pr[d.k]=1}
 else if(d.t=='re'){if(NET.h&&scene=='over')start()}
@@ -602,7 +607,8 @@ else if(d.t=='s')netApply(d)}
 let RM=null;function enc(v,top){if(!RM){RM=new Map();CHARS.forEach((c,i)=>RM.set(c,{$c:i}));if(typeof BUILDS!='undefined')BUILDS.forEach((b,i)=>RM.set(b,{$b:i}))}const f0=F[0],f1=F[1];return JSON.stringify(v,function(k,x){if(typeof x=='number')return Math.round(x*10)/10;if(x&&typeof x=='object'){const r=RM.get(x);if(r)return r;if(this!==top&&k!==''){if(x===f0)return{$f:0};if(x===f1)return{$f:1}}}return x})}
 function dec(o,Fs){if(Array.isArray(o)){for(let i=0;i<o.length;i++)o[i]=dec(o[i],Fs);return o}if(o&&typeof o=='object'){if('$c'in o)return CHARS[o.$c];if('$b'in o)return BUILDS[o.$b];if('$f'in o)return{$f:o.$f};for(const k in o)o[k]=dec(o[k],Fs);}return o}
 function fixF(o,Fs){if(Array.isArray(o)){o.forEach((v,i)=>{if(v&&v.$f!=null&&Object.keys(v).length==1)o[i]=Fs[v.$f];else fixF(v,Fs)})}else if(o&&typeof o=='object'){for(const k in o){const v=o[k];if(v&&typeof v=='object'){if(v.$f!=null&&Object.keys(v).length==1)o[k]=Fs[v.$f];else fixF(v,Fs)}}}}
-function netHostTick(){if(!NET.c||!NET.c.open)return;if(scene=='menu')return;const dc=NET.c.dataChannel;if(dc&&dc.bufferedAmount>65536)return;
+function netReport(){if(NET&&NET.rk&&scene=='over'&&NET.mid&&NET.rep!==NET.mid&&NET.oid){NET.rep=NET.mid;parent.postMessage({type:'ff-result',match:NET.mid,opp:NET.oid,won:winner==(NET.h?0:1)},location.origin)}}
+function netHostTick(){netReport();if(!NET.c||!NET.c.open)return;if(scene=='menu')return;const dc=NET.c.dataChannel;if(dc&&dc.bufferedAmount>65536)return;
 const st={F,PR,EX,CIN,RET,FL,shake,stop,winner,scene,SPC,PETS,DOM,mi:cfg.map,sq:SQ.splice(0)};
 const pt=(T%4==0)?PT.map(p=>[p.x,p.y,p.vx,p.vy,p.l,p.m,p.c,p.s].map(v=>typeof v=='number'?Math.round(v*10)/10:v)):null;
 netSend({t:'s',d:enc(st,F),pt})}
@@ -610,7 +616,7 @@ function netApply(m){const s=dec(JSON.parse(m.d));fixF(s,s.F);
 if(scene=='menu'||NET.mi!==s.mi){map=bigMap(MAPS[s.mi]);NET.mi=s.mi;M.style.display='none';CZ=.7;CX=WW/2;CY=WH/2}
 F=s.F;PR=s.PR;SPC=s.SPC;PETS=s.PETS||[];DOM=s.DOM;EX=s.EX;CIN=s.CIN;RET=s.RET;FL=s.FL;shake=s.shake;stop=s.stop;winner=s.winner;scene=s.scene;paused=false;tut=null;
 if(m.pt)PT=m.pt.map(a=>({x:a[0],y:a[1],vx:a[2],vy:a[3],l:a[4],m:a[5],c:a[6],s:a[7]}));
-for(const a of s.sq||[])snd(...a);NET.got=1}
+for(const a of s.sq||[])snd(...a);netReport();NET.got=1}
 function netGuestTick(){if(scene!='play')return;if(!NET.got&&stop<=0){for(const f of F)if(f.dead<=0){f.x+=f.vx||0;f.y+=f.vy||0}for(const p of PR){p.x+=p.vx||0;p.y+=p.vy||0}}NET.got=0;const K=keys,h={l:K.KeyA||K.ArrowLeft,r:K.KeyD||K.ArrowRight,d:K.KeyS||K.ArrowDown,u:K.KeyW||K.ArrowUp},j=JSON.stringify(h);if(j!=NET.lh||T%30==0){NET.lh=j;netSend({t:'h',h})}}
 menu();loop();
 </script></body></html>
