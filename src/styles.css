@@ -150,3 +150,9 @@
 @utility text-gradient-fire { background: linear-gradient(180deg, oklch(1 0 0), var(--f-volt) 45%, var(--f-blaze)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 @utility text-gradient-ice { background: linear-gradient(180deg, oklch(1 0 0), var(--f-frost) 50%, oklch(0.55 0.22 285)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 @utility shadow-glow { box-shadow: 0 0 60px oklch(0.68 0.2 35 / 0.35); }
+
+@utility hud-pill { display: inline-flex; align-items: center; gap: 0.4rem; border-radius: 9999px; border: 1px solid var(--border); background: oklch(0.14 0.03 275 / 0.85); padding: 0.35rem 0.85rem; font-size: 0.8rem; font-weight: 700; color: var(--foreground); backdrop-filter: blur(6px); transition: transform .15s; &:hover { transform: translateY(-1px); border-color: var(--primary); } }
+@utility rank-dot { display: inline-block; width: 0.65rem; height: 0.65rem; border-radius: 9999px; }
+:root { --rk-bronze: oklch(0.62 0.11 55); --rk-silver: oklch(0.82 0.01 260); --rk-gold: oklch(0.84 0.16 88); --rk-platinum: oklch(0.82 0.08 190); --rk-diamond: oklch(0.75 0.14 240); --rk-crystal: oklch(0.85 0.1 300); --rk-master: oklch(0.65 0.22 330); --rk-grandmaster: oklch(0.63 0.24 25); --rk-legend: oklch(0.9 0.17 95); }
+.rank-bronze{background:var(--rk-bronze);color:var(--rk-bronze)}.rank-silver{background:var(--rk-silver);color:var(--rk-silver)}.rank-gold{background:var(--rk-gold);color:var(--rk-gold)}.rank-platinum{background:var(--rk-platinum);color:var(--rk-platinum)}.rank-diamond{background:var(--rk-diamond);color:var(--rk-diamond)}.rank-crystal{background:var(--rk-crystal);color:var(--rk-crystal)}.rank-master{background:var(--rk-master);color:var(--rk-master)}.rank-grandmaster{background:var(--rk-grandmaster);color:var(--rk-grandmaster)}.rank-legend{background:var(--rk-legend);color:var(--rk-legend);box-shadow:0 0 10px var(--rk-legend)}
+.rank-text{background:none!important}

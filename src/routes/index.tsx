@@ -50,7 +50,7 @@ function Index() {
           if (!applied) await new Promise((r) => setTimeout(r, 1500));
         }
         await refresh();
-        if (applied || i_already_applied(before, playerRef.current?.rating)) {
+        if (applied || ratingChanged(before, playerRef.current?.rating)) {
           toast.success(won ? "Ranked win! +25" : "Ranked loss. −20");
         }
       }
@@ -85,6 +85,6 @@ function Index() {
   );
 }
 
-function i_already_applied(before: number, after?: number) {
+function ratingChanged(before: number, after?: number) {
   return after !== undefined && after !== before;
 }
