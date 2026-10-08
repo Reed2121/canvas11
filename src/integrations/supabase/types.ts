@@ -14,13 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      match_reports: {
+        Row: {
+          applied: boolean
+          created_at: string
+          match_id: string
+          opponent: string
+          reporter: string
+          won: boolean
+        }
+        Insert: {
+          applied?: boolean
+          created_at?: string
+          match_id: string
+          opponent: string
+          reporter: string
+          won: boolean
+        }
+        Update: {
+          applied?: boolean
+          created_at?: string
+          match_id?: string
+          opponent?: string
+          reporter?: string
+          won?: boolean
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          losses: number
+          rating: number
+          username: string
+          wins: number
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          losses?: number
+          rating?: number
+          username: string
+          wins?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          losses?: number
+          rating?: number
+          username?: string
+          wins?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      report_result: {
+        Args: { _match: string; _opponent: string; _won: boolean }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never
