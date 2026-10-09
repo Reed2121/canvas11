@@ -35,6 +35,8 @@ jobs:
         run: bun run build
 
   pages-build:
+    # GitHub Pages needs a public repo on the free plan; skip on private repos
+    if: github.event.repository.private == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
