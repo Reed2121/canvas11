@@ -45,6 +45,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          last_tournament_at: string | null
           losses: number
           rating: number
           username: string
@@ -53,6 +54,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id: string
+          last_tournament_at?: string | null
           losses?: number
           rating?: number
           username: string
@@ -61,6 +63,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          last_tournament_at?: string | null
           losses?: number
           rating?: number
           username?: string
@@ -77,6 +80,7 @@ export type Database = {
         Args: { _match: string; _opponent: string; _won: boolean }
         Returns: Json
       }
+      report_tournament: { Args: { _rounds: number }; Returns: Json }
     }
     Enums: {
       [_ in never]: never

@@ -40,6 +40,13 @@ function Index() {
       if (e.origin !== window.location.origin || !e.data) return;
       if (e.data.type === "ff-ready") sendAuth();
       if (e.data.type === "ff-signin") navigate({ to: "/auth" });
+      if (e.data.type === "ff-tour") {
+        const { data } = await supabase.rpc("report_tournament", { _rounds: Number(e.data.rounds) || 0 });
+        const res = data as { applied?: boolean; points?: number } | null;
+        await refresh();
+        if (res?.applied) toast.success(`Ranked tournament: ${res.points! >= 0 ? "+" : ""}${res.points}`);
+        else toast("Ranked tournament points are limited to one every 3 minutes.");
+      }
       if (e.data.type === "ff-result") {
         const { match, opp, won } = e.data as { match: string; opp: string; won: boolean };
         const before = playerRef.current?.rating ?? 0;
