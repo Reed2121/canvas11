@@ -14,8 +14,8 @@ function loadGame() {
   if (!script) throw new Error("Game script missing");
   return new Function(`${script}; return {
     start, enc, netApply, botDiff, rankName,
-    setup: (mode, mapIndex) => { cfg.mode=mode; cfg.map=mapIndex; cfg.p1=11; cfg.p2=12; },
-    peers: () => { NET={h:1,g:0,rh:{},och:12,c:{open:true,send:()=>{}}}; },
+    setup: (mode, mapIndex) => { cfg.mode=mode; cfg.map=mapIndex; cfg.p1=1; cfg.p2=10; },
+    peers: () => { NET={h:1,g:0,rh:{},och:10,c:{open:true,send:()=>{}}}; },
     snapshot: () => ({t:'s', d:enc({F,PR,EX,CIN,RET,FL,shake,stop,winner,scene,SPC,PETS,DOM,GH,EVS,terrainP:map.P,mi:cfg.map}, F)}),
     state: () => ({F,map,EVS,GH}),
     event: () => { EVS.nn='HIGH TIDE'; evStart(); terrain(); },
@@ -29,7 +29,7 @@ describe("Game update compatibility", () => {
   beforeEach(() => localStorage.clear());
   afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
-  it("keeps new fighters and terrain synchronized through online snapshots", () => {
+  it("keeps fighters, effects, and new terrain synchronized through online snapshots", () => {
     const game = loadGame();
     game.setup("online", 3);
     game.peers();
@@ -39,7 +39,7 @@ describe("Game update compatibility", () => {
     const y = game.state().map.P[0].y;
     game.netApply(game.snapshot());
     const state = game.state();
-    expect(state.F.map((f: { ch: { n: string } }) => f.ch.n)).toEqual(["Echo", "Bulwark"]);
+    expect(state.F.map((f: { ch: { n: string } }) => f.ch.n)).toEqual(["Frost", "Swamped"]);
     expect(state.F[1].ai).toBe(-3);
     expect(state.map.P[0].y).toBeCloseTo(y, 1);
     expect(state.EVS.name).toBe("HIGH TIDE");
