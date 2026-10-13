@@ -10,6 +10,8 @@ export const Route = createFileRoute("/auth")({
     { name: "description", content: "Sign in to play ranked and climb the Final Fight ladder." },
     { property: "og:title", content: "Sign in — Final Fight" },
     { property: "og:description", content: "Create an account to play ranked matches." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
   ] }),
   component: AuthPage,
 });

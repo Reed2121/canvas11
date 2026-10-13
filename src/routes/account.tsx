@@ -9,6 +9,8 @@ export const Route = createFileRoute("/account")({
     { name: "description", content: "Your Final Fight rank and record." },
     { property: "og:title", content: "Your Account — Final Fight" },
     { property: "og:description", content: "Your rank and ranked record." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
   ] }),
   component: Account,
 });
