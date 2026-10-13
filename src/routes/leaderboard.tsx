@@ -9,6 +9,8 @@ export const Route = createFileRoute("/leaderboard")({
     { name: "description", content: "Top Final Fight players, from Bronze to Legend." },
     { property: "og:title", content: "Ranked Ladder — Final Fight" },
     { property: "og:description", content: "See who holds the 25 Legend spots." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
   ] }),
   component: Board,
 });
